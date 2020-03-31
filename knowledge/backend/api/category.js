@@ -3,7 +3,7 @@ module.exports = app => {
 
   const save = (request, response) => {
     const category = { ...request.body };
-    if (req.params.id) category.id = req.params.id;
+    if (request.params.id) category.id = request.params.id;
 
     try {
       existsOrError(category.name, "Nome não informado");
@@ -35,7 +35,7 @@ module.exports = app => {
       notExistsOrError(subcategory, "Categoria possui subcatogorias.");
       const articles = await app
         .db("articles")
-        .where({ categoryId: req.params.id });
+        .where({ categoryId: request.params.id });
       notExistsOrError(articles, "Categoria possui artigos");
 
       const rowDeleted = await app
@@ -51,8 +51,42 @@ module.exports = app => {
     }
   };
   const withPath = categories => {
+    /* getParent vai pegar exatamente o parent que estamos buscando */
     const getParent = (categories, parentId) => {
-        const parent = categories.filter(parent => parent.id === parentId)
+      const parent = categories.filter(parent => parent.id === parentId);
+      return parent.length ? parent[0] : null;
     };
+    /* Transformar um array de categorias em um outro array de categorias com o atributo a mais (ATRIBUTO PATH)*/
+    const categoriesWithPath = categories.map(category => {
+      let path = category.name;
+      let parent = getParent(categories, category.parentId);
+
+      while (parent) {
+        path = `${parent.name} > ${path}`;
+        parent = getParent(categories, parent.parentId);
+      }
+      return { ...category, path };
+    });
+    categoriesWithPath.sort((a, b) => {
+      if (a.path < b.path) return -1;
+      if (a.path > b.path) return 1;
+      return 0;
+    });
+    return categoriesWithPath;
   };
+  const get = (request, response) => {
+    app
+      .db("categories")
+      .then(categories => response.json(withPath(categories)))
+      .catch(error => response.status(500).send(error));
+  };
+  const getById = (request, response) => {
+    app
+      .db("categories")
+      .where({ id: request.params.id })
+      .first()
+      .then(category => response.json(category))
+      .catch(error => response.status(500).send(error));
+  };
+  return { save, remove, get, getById };
 };
