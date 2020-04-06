@@ -1,4 +1,5 @@
-module.exports = app => {
+const queries = require("./queries");
+module.exports = (app) => {
   const { existsOrError } = app.api.validation;
   const save = (request, response) => {
     const article = { ...request.body };
@@ -17,14 +18,14 @@ module.exports = app => {
         .db("articles")
         .update(article)
         .where({ id: article.id })
-        .then(_ => response.status(204).send())
-        .catch(error => response.status(500).send(error));
+        .then((_) => response.status(204).send())
+        .catch((error) => response.status(500).send(error));
     } else {
       app
         .db("articles")
         .insert(article)
-        .then(_ => response.status(204).send())
-        .catch(error => response.status(500).send(error));
+        .then((_) => response.status(204).send())
+        .catch((error) => response.status(500).send(error));
     }
   };
   const remove = async (request, response) => {
@@ -47,10 +48,7 @@ module.exports = app => {
   const get = async (request, response) => {
     const page = request.query.page || 1;
     /* count('id') serve para quantificar o artigos */
-    const result = await app
-      .db("articles")
-      .count("id")
-      .first();
+    const result = await app.db("articles").count("id").first();
     const count = parseInt(result.count);
 
     app
@@ -59,20 +57,45 @@ module.exports = app => {
       /* Offset é o deslocamento. Na pag 1 = 0, pag 2 = 10, pag 3 = 20  */
       .limit(limit)
       .offset(page * limit - limit)
-      .then(articles => response.json({ data: articles, limit, count }))
-      .catch(error => response.status(500).send(error));
+      .then((articles) => response.json({ data: articles, limit, count }))
+      .catch((error) => response.status(500).send(error));
   };
   const getById = (request, response) => {
     app
       .db("articles")
       .where({ id: request.params.id })
       .first()
-      .then(articles => {
+      .then((articles) => {
         /* Article.content chega em formato binario. */
         articles.content = articles.content.toString();
         return response.json(articles);
       })
-      .catch(error => response.status(500).send(error));
+      .catch((error) => response.status(500).send(error));
   };
-  return { save, remove, get, getById };
+
+  const getByCategory = async (request, response) => {
+    const categoryId = request.params.id;
+    const page = request.query.page || 1;
+    const categories = await app.db.raw(
+      queries.categoryWithChildren,
+      categoryId
+    );
+    const ids = categories.rows.map((c) => c.id);
+    /* Apelido para os bancos articles e users */
+    app
+      .db({ a: "articles", u: "users" })
+      .select("a.id", "a.name", "a.description", "a.imageUrl", {
+        author: "u.name",
+      })
+      .limit(limit).offset(page*limit - limit)
+      .whereRaw('?? = ??', ['u.id', 'a.userId'])
+      /* whereIn = select * from articles where id in (1,2,3). O resultado será os elementos do id 1 ao 3 */
+      .whereIn('categoryId', ids)
+      /* Vai ordenar em decrescente */
+      .orderBy('a.id', 'desc')
+      .then(articles => response.json(articles))
+      .catch(error => response.status(500).send(error))
+  };
+
+  return { save, remove, get, getById, getByCategory };
 };
