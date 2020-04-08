@@ -5,9 +5,9 @@ module.exports = app => {
 
   const encryptPassword = password => {
     /* Salt = tempero. Gera um hash diferente para para cada senha ou até para mesma senha */
-    const salt = bcrypt.genSaltSync(10);
+   const salt = bcrypt.genSaltSync(10);
     /* Agora eu tenho a senha e sua cryptografia persistida no banco de dados */
-    return bcrypt.hashSync(password, salt);
+   return bcrypt.hashSync(password, salt);
   };
   /* Metdo save serve para inserir um usuario ou altera-lo */
   const save = async (request, response) => {
