@@ -3,7 +3,7 @@ module.exports = (app) => {
     users: Number,
     categories: Number,
     articles: Number,
-    createAt: Date,
+    createdAt: Date,
   });
   const get = (request, response) => {
     Stat.findOne({}, {}, { sort: { createdAt: -1 } }).then((stat) => {
@@ -12,7 +12,7 @@ module.exports = (app) => {
         categories: 0,
         articles: 0,
       };
-      return response.json(stat || defaultState);
+      response.json(stat);
     });
   };
   return { Stat, get };
