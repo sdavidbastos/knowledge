@@ -9,10 +9,12 @@
     </div>
     <div class="user-dropdown-content">
       <a href>
-        <i class="fa fa-cogs">Administração</i>
+        <i class="fa fa-cogs" />
+        <span>Administração</span>
       </a>
       <a href>
-        <i class="fa fa-sign-out">Sair</i>
+        <i class="fa fa-sign-out" />
+        <span>Sair</span>
       </a>
     </div>
   </div>
@@ -56,8 +58,38 @@ export default {
 .user-dropdown-content {
   position: absolute;
   right: 0px;
-  background-color: #f9f9f9;
+  background-color: #050505;
   min-width: 170px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  z-index: 1;
+  border-radius: 5px;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s linear;
+}
+
+.user-dropdown:hover .user-dropdown-content {
+  visibility: visible;
+  opacity: 1;
+}
+.user-dropdown-content a{
+  text-decoration: none;
+  color: #bbb;
+  padding: 10px;
+  border: solid 1px transparent; 
+}
+.user-dropdown-content a:hover{
+  border: solid 1px #2D8EE3;
+  text-decoration: none;
+  color: #bbb;
+}
+.user-dropdown-content a i{
+  padding-right: 20px;
 }
 </style>

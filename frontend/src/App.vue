@@ -1,6 +1,8 @@
 <template>
   <div id="app" :class="{'hide-menu': !isMenuVisible}">
-    <Header title="Base de Conhecimento" :hideToggle="false" />
+    <Header title="Base de Conhecimento" :hideToggle="false" 
+    :hideUserDropdown="false"
+    />
     <Menu />
     <Content />
     <Footer />
@@ -27,7 +29,7 @@ export default {
   padding: 0;
   box-sizing: border-box;
 
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 #app {
