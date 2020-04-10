@@ -16,7 +16,8 @@ module.exports = app => {
     /* 1º Caso: Se o usuario estiver logado e quiser fazer alteração
     2º Caso: Se o usuario quiser se cadastrar e já existir esse cadastro */
     if (request.params.id) user.id = request.params.id;
-
+    if(!request.originalUrl.startsWith('/users')) user.admin = false
+    if(!request.user || !request.user.admin) user.admin = false 
     try {
       existsOrError(user.name, "Nome não informado");
       existsOrError(user.email, "E-mail não informado");
@@ -44,6 +45,7 @@ module.exports = app => {
         .db("users")
         .update(user)
         .where({ id: user.id })
+        .whereNull('deletedAt')
         /* Status 204: deu tudo certo e não há retorno de dados */
         .then(_ => response.status(204).send())
         /* Status 500: os dados foram validados, logo o erro foi no backend. */
@@ -62,6 +64,7 @@ module.exports = app => {
       .db("users")
       /* Os parametros do select são equivalentes as colunas da tabela */
       .select("id", "name", "email", "admin")
+      .whereNull('deletedAt')
       .then(users => response.json(users))
       .catch(error => response.status(500).send(error));
   };
@@ -71,10 +74,25 @@ module.exports = app => {
       /* Os parametros do select são equivalentes as colunas da tabela */
       .select("id", "name", "email", "admin")
       .where({ id: request.params.id })
+      .whereNull('deletedAt')
       /* first(): significa que é para busar somente um resultado e não uma lista de usuarios */
       .first()
       .then(user => response.json(user))
       .catch(error => response.status(500).send(error));
   };
-  return { save, get, getById };
+  const remove = async (request, response) => {
+    try{
+      const articles = await app.db('articles')
+        .where({ userId: request.params.id })
+      notExistsOrError(articles, 'Usuario possui artigos')
+      const rowsUpdated = await app.db('users')
+        .update({deletedAt: new Date()})
+        .where({ id: request.params.id })
+      existsOrError(rowsUpdated, 'Usuario não encontrado!')
+      response.status(204).send()
+    } catch(msg){
+      response.status(400).send(msg)
+    }
+  }
+  return { save, get, getById, remove };
 };
