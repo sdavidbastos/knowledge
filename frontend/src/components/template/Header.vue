@@ -3,7 +3,7 @@
     <a @click="toggleMenu" v-if="!hideToggle" class="toggle">
       <i class="fa fa-lg fa-angle-right" :class="rotate" />
     </a>
-    <h3 class="title">{{title}}</h3>
+    <h3 class="title"><router-link to="/">{{title}}</router-link></h3>
     <UserDropdown v-if="!hideUserDropdown" />
   </header>
 </template>
@@ -47,7 +47,11 @@ export default {
   flex-grow: 1;
   text-align: center;
 }
-.title .a {
+.title a {
+  color: #fff;
+  text-decoration: none;
+}
+.title a:hover {
   color: #fff;
   text-decoration: none;
 }
