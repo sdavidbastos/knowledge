@@ -46,6 +46,7 @@ export default {
   font-weight: 100;
   flex-grow: 1;
   text-align: center;
+  align-self: center;
 }
 .title a {
   color: #fff;
