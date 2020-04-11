@@ -1,7 +1,7 @@
 /* O parametro representa a instância do express do index.js */
 const bcrypt = require("bcrypt-nodejs");
 module.exports = app => {
-  const { existsOrError, notExistsOrError, equalsOrError } = app.api.validation;
+  const { existsOrError, notExistsOrError, equalsOrError, passwordValidation } = app.api.validation;
 
   const encryptPassword = password => {
     /* Salt = tempero. Gera um hash diferente para para cada senha ou até para mesma senha */
@@ -21,6 +21,9 @@ module.exports = app => {
     try {
       existsOrError(user.name, "Nome não informado");
       existsOrError(user.email, "E-mail não informado");
+      existsOrError(user.password, "Senha não informada")
+      passwordValidation(user.password, "Insira uma senha com 8 ou mais caracteres")
+      existsOrError(user.confirmPassword, "Confirmação de Senha inválida")
       equalsOrError(user.password, user.confirmPassword, "Senhas não conferem");
 
       const userFromDB = await app

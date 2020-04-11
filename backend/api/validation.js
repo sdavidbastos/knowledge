@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   /* Se existir*/
   function existsOrError(value, msg) {
     /* Exceção: caso value seja igual a false */
@@ -21,5 +21,8 @@ module.exports = app => {
   function equalsOrError(valueA, valueB, msg) {
     if (valueA !== valueB) throw msg;
   }
-  return { existsOrError, notExistsOrError, equalsOrError };
+  function passwordValidation(value, msg) {
+    if (value.length <= 6) throw msg;
+  }
+  return { existsOrError, notExistsOrError, equalsOrError, passwordValidation};
 };
