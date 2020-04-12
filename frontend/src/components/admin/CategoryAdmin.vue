@@ -6,7 +6,14 @@
 
 <script>
 export default {
-    name:"CategoryAdmin"
+    name:"CategoryAdmin",
+    data: function(){
+      return {
+        category: {},
+        categories:[],
+        
+      }
+    }
 }
 </script>
 

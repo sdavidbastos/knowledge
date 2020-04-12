@@ -22,7 +22,7 @@ module.exports = app => {
       existsOrError(user.name, "Nome não informado");
       existsOrError(user.email, "E-mail não informado");
       existsOrError(user.password, "Senha não informada")
-      passwordValidation(user.password, "Insira uma senha com 8 ou mais caracteres")
+      passwordValidation(user.password, "Insira uma senha com 6 ou mais caracteres")
       existsOrError(user.confirmPassword, "Confirmação de Senha inválida")
       equalsOrError(user.password, user.confirmPassword, "Senhas não conferem");
 
@@ -66,7 +66,7 @@ module.exports = app => {
     app
       .db("users")
       /* Os parametros do select são equivalentes as colunas da tabela */
-      .select("id", "name", "email", "admin")
+      .select("id", "name", "email","admin")
       .whereNull('deletedAt')
       .then(users => response.json(users))
       .catch(error => response.status(500).send(error));

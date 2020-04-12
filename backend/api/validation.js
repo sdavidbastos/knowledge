@@ -22,7 +22,7 @@ module.exports = (app) => {
     if (valueA !== valueB) throw msg;
   }
   function passwordValidation(value, msg) {
-    if (value.length <= 6) throw msg;
+    if (value.length < 6) throw msg;
   }
   return { existsOrError, notExistsOrError, equalsOrError, passwordValidation};
 };
