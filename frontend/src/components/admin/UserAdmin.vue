@@ -93,7 +93,7 @@ export default {
       user: {},
       users: [],
       fields: [
-        { key: "id", label: "Codigo", sortable: true },
+        { key: "id", label: "Código", sortable: true },
         { key: "name", label: "Nome", sortable: true },
         { key: "email", label: "E-mail", sortable: true },
         {

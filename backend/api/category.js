@@ -2,7 +2,11 @@ module.exports = app => {
   const { existsOrError, notExistsOrError } = app.api.validation;
 
   const save = (request, response) => {
-    const category = { ...request.body };
+    const category = { 
+      id: request.body.id,
+      name: request.body.name,
+      parentId: request.body.parentId
+    };
     if (request.params.id) category.id = request.params.id;
 
     try {
@@ -46,7 +50,7 @@ module.exports = app => {
       existsOrError(rowDeleted, "Categoria não foi encontrada");
 
       response.status(204).send();
-    } catch {
+    } catch(msg) {
       response.status(400).send(msg);
     }
   };

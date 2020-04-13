@@ -44,7 +44,7 @@ module.exports = (app) => {
       response.status(500).send(msg);
     }
   };
-  const limit = 10; //usada para paginação
+  const limit = 3; //usada para paginação
   const get = async (request, response) => {
     const page = request.query.page || 1;
     /* count('id') serve para quantificar o artigos */
