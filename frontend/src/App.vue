@@ -40,9 +40,15 @@ export default {
         this.$router.push({ name: "auth" });
         return;
       }
-      const response = await axios.post(`${baseApiUrl}/validateToken`, userData);
+      const response = await axios.post(
+        `${baseApiUrl}/validateToken`,
+        userData
+      );
       if (response.data) {
         this.$store.commit("setUser", userData);
+        if (this.$mq === "xs" || this.$mq === "sm") {
+          this.$store.commit("toggleMenu", false);
+        }
       } else {
         localStorage.removeItem(userKey);
         this.$router.push({ name: "auth" });

@@ -34,17 +34,17 @@ module.exports = (app) => {
   };
   const validateToken = async (request, response) => {
     const userData = request.body || null;
-    try{
-      if(userData) {
-        const token = jwt.decode(userData.token, authSecret)
-        if(new Date(token.exp*1000) > new Date()){
-          return response.send(true)
+    try {
+      if (userData) {
+        const token = jwt.decode(userData.token, authSecret);
+        if (new Date(token.exp * 1000) > new Date()) {
+          return response.send(true);
         }
       }
-    }catch(e){
+    } catch (e) {
       /* Problema de token */
     }
-  response.send(false)
+    response.send(false);
   };
-  return { signin, validateToken}
+  return { signin, validateToken };
 };
